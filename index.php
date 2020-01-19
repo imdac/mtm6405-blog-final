@@ -28,6 +28,11 @@ $posts = [
   ]
 ];
 
+if (isset($_GET['post'])) {
+  $current = $posts[$_GET['post']];
+} else {
+  $current = $posts['post-1'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -49,15 +54,17 @@ $posts = [
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav">
-        <li class="nav-item active">
-          <a class="nav-link" href="#">Post</a>
-        </li>
+        <?php foreach ($posts as $slug => $post) : ?>
+          <li class="nav-item <?php if ($_GET['post'] === $slug) : ?> active <?php endif; ?>">
+            <a class="nav-link" href="?post=<?php echo $slug; ?>"><?php echo $post['title']; ?></a>
+          </li>
+        <?php endforeach; ?>
       </ul>
     </div>
   </nav>
   <main class="d-flex flex-column h-100 py-5">
     <header class="header h-20 p-5">
-      <h1 class="header-title display-1">Post</h1>
+      <h1 class="header-title display-1"><?php echo $current['title']; ?></h1>
     </header>
     <article class="flex-grow-1 p-5">
 
@@ -66,14 +73,25 @@ $posts = [
     </article>
     <footer class="align-self-center">
       <div class="page-nav">
-        <a class="btn btn-outline-primary">
-          &lt; Prev
-        </a>
-        <a class="btn btn-outline-primary">
-          Next &gt;
-        </a>
+
+        <?php if (isset($current['links']['prev'])) : ?>
+          <a class="btn btn-outline-primary" href="?post=<?php echo $current['links']['prev']; ?>">
+            &lt; Prev
+          </a>
+        <?php else : ?>
+          <a class="btn btn-outline-primary disabled">&lt; Prev</a>
+        <?php endif; ?>
+
+        <?php if (isset($current['links']['next'])) : ?>
+          <a class="btn btn-outline-primary" href="?post=<?php echo $current['links']['next']; ?>">
+            Next &gt;
+          </a>
+        <?php else : ?>
+          <a class="btn btn-outline-primary disabled">Next &gt;</a>
+        <?php endif; ?>
       </div>
     </footer>
+
 </body>
 
 </html>
